@@ -6,9 +6,15 @@ const errorHandler = (
     res: Response,
     next: NextFunction
 ) => {
-    logEvents(`${err.name}: ${err.message}`, "errLog.txt");
+    const status =
+        (err as Error & { status?: number; statusCode?: number }).status ??
+        (err as Error & { status?: number; statusCode?: number }).statusCode ??
+        500;
+    const message = err.message || "Internal Server Error";
+
+    logEvents(`${err.name}: ${message}`, "errLog.txt");
     console.error(err.stack);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(status).json({ message });
 };
 
 export default errorHandler;

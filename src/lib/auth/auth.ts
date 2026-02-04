@@ -7,7 +7,7 @@ import * as schema from "../drizzle/schema.js";
 
 const crosDomains = process.env.CORS_ALLOWED_ORIGINS
     ? process.env.CORS_ALLOWED_ORIGINS.split(",")
-    : ["http://localhost:5173", "http://localhost:3000", "null", "file://"];
+    : ["http://localhost:5173", "http://localhost:3000","http://localhost:3001", "null", "file://"];
 
 const frontendURL = process.env.FRONTEND_URL || "http://localhost:5173";
 const appName = process.env.APP_NAME || "Clawpilot";

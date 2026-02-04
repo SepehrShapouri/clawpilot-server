@@ -1,9 +1,17 @@
-const defaultOrigins = ["http://localhost:5173", "http://localhost:3000", "null", "file://"];
-const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS
+const defaultOrigins = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "null",
+    "file://",
+];
+const envOrigins = process.env.CORS_ALLOWED_ORIGINS
     ? process.env.CORS_ALLOWED_ORIGINS.split(",")
-    : defaultOrigins;
+    : [];
+const frontendOrigin = process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : [];
 
-const normalizedOrigins = allowedOrigins.map((origin) => origin.trim()).filter(Boolean);
+const normalizedOrigins = [...defaultOrigins, ...envOrigins, ...frontendOrigin]
+    .map((origin) => origin.trim())
+    .filter(Boolean);
 
 const corsConfig = {
     origin: (origin: string | undefined, callback: (err: Error | null, ok?: boolean) => void) => {
@@ -13,6 +21,7 @@ const corsConfig = {
             callback(new Error("Not allowed by CORS"));
         }
     },
+    credentials: true,
     optionsSuccessStatus: 200,
 };
 

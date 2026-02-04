@@ -1,7 +1,102 @@
 import { Router } from "express";
-import { toNodeHandler } from "better-auth/node";
+import { APIError } from "better-auth/api";
+import { fromNodeHeaders, toNodeHandler } from "better-auth/node";
 import { auth } from "../../lib/auth/auth.js";
 const router = Router();
+
+const applyAuthCookies = (headers: Headers, res: import("express").Response) => {
+  const setCookie = headers.get("set-cookie");
+  if (setCookie) {
+    res.setHeader("set-cookie", setCookie);
+  }
+};
+
+const getApiErrorStatus = (error: APIError) => {
+  const statusCode = (error as APIError & { statusCode?: number }).statusCode;
+  if (typeof statusCode === "number") {
+    return statusCode;
+  }
+  if (typeof (error as APIError & { status?: number }).status === "number") {
+    return (error as APIError & { status?: number }).status;
+  }
+  return undefined;
+};
+
+const isExistingUserError = (error: unknown) => {
+  if (error instanceof APIError) {
+    if (getApiErrorStatus(error) === 409) {
+      return true;
+    }
+    const code = (error as APIError & { code?: string }).code?.toLowerCase();
+    if (code && code.includes("exist")) {
+      return true;
+    }
+    return error.message.toLowerCase().includes("already");
+  }
+
+  const message =
+    error instanceof Error ? error.message.toLowerCase() : "";
+  return message.includes("already");
+};
+
+router.post("/credentials", async (req, res, next) => {
+  const { email, password } = req.body ?? {};
+  if (typeof email !== "string" || typeof password !== "string") {
+    return res.status(400).json({ message: "Email and password are required." });
+  }
+
+  const name =
+    typeof req.body?.name === "string" && req.body.name.trim().length > 0
+      ? req.body.name.trim()
+      : email.split("@")[0] || "user";
+
+  try {
+    const { headers } = await auth.api.signUpEmail({
+      body: {
+        email,
+        password,
+        name,
+      },
+      returnHeaders: true,
+      headers: fromNodeHeaders(req.headers),
+    });
+
+    applyAuthCookies(headers, res);
+    return res.json({ mode: "signup" });
+  } catch (error) {
+    if (!isExistingUserError(error)) {
+      if (error instanceof APIError) {
+        return res.status(getApiErrorStatus(error) ?? 400).json({
+          code: (error as APIError & { code?: string }).code,
+          message: error.message,
+        });
+      }
+      return next(error);
+    }
+  }
+
+  try {
+    const { headers } = await auth.api.signInEmail({
+      body: {
+        email,
+        password,
+      },
+      returnHeaders: true,
+      headers: fromNodeHeaders(req.headers),
+    });
+
+    applyAuthCookies(headers, res);
+    return res.json({ mode: "signin" });
+  } catch (error) {
+    if (error instanceof APIError) {
+      return res.status(getApiErrorStatus(error) ?? 400).json({
+        code: (error as APIError & { code?: string }).code,
+        message: error.message,
+      });
+    }
+    return next(error);
+  }
+});
 
 /**
  * 
