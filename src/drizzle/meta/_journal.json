@@ -43,6 +43,13 @@
       "when": 1770139716052,
       "tag": "0005_good_peter_parker",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1769810000000,
+      "tag": "0006_optional_user_name",
+      "breakpoints": true
     }
   ]
 }

@@ -1,5 +1,7 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { magicLink } from "better-auth/plugins";
+import { Resend } from "resend";
 import db from "../drizzle/db.js";
 import * as schema from "../drizzle/schema.js";
 
@@ -8,6 +10,10 @@ const crosDomains = process.env.CORS_ALLOWED_ORIGINS
     : ["http://localhost:5173", "http://localhost:3000", "null", "file://"];
 
 const frontendURL = process.env.FRONTEND_URL || "http://localhost:5173";
+const appName = process.env.APP_NAME || "Clawpilot";
+const resendApiKey = process.env.RESEND_API_KEY;
+const resendFrom = process.env.RESEND_FROM;
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
 // Ensure frontend URL is always in trusted origins
 const trustedOrigins = [...new Set([...crosDomains, frontendURL])]
@@ -45,6 +51,26 @@ export const auth = betterAuth({
             clientSecret: process.env.APPLE_CLIENT_SECRET as string,
         },
     },
+    plugins: [
+        magicLink({
+            sendMagicLink: async ({ email, url }) => {
+                if (!resend) {
+                    throw new Error("RESEND_API_KEY is not set");
+                }
+                if (!resendFrom) {
+                    throw new Error("RESEND_FROM is not set");
+                }
+
+                await resend.emails.send({
+                    from: resendFrom,
+                    to: email,
+                    subject: `Sign in to ${appName}`,
+                    html: `<p>Use this link to sign in to ${appName}:</p><p><a href="${url}">Sign in</a></p>`,
+                    text: `Use this link to sign in to ${appName}: ${url}`,
+                });
+            },
+        }),
+    ],
     advanced: {
         defaultCookieAttributes: {
             sameSite: "lax",
