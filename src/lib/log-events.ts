@@ -2,7 +2,11 @@ import { format } from "date-fns";
 import { v4 as uuid } from "uuid";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 import { Request, Response, NextFunction } from "express";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 interface LogEvent {
     message: string;
@@ -11,15 +15,13 @@ interface LogEvent {
 const logEvents = (message: string, logFileName: string) => {
     const dateTime = format(new Date(), "yyyyMMdd\tHH:mm:ss");
     const logItem = `${dateTime}\t${uuid()}\t${message}\n`;
+    const logsDir = path.join(__dirname, "..", "..", "logs");
 
     try {
-        if (!fs.existsSync(path.join(__dirname, "..", "logs"))) {
-            fs.mkdirSync(path.join(__dirname, "..", "logs"));
+        if (!fs.existsSync(logsDir)) {
+            fs.mkdirSync(logsDir);
         }
-        fs.appendFileSync(
-            path.join(__dirname, "..", "..", "logs", logFileName),
-            logItem
-        );
+        fs.appendFileSync(path.join(logsDir, logFileName), logItem);
     } catch (err) {
         console.error(err);
     }

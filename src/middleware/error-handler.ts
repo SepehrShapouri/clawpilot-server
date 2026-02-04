@@ -1,5 +1,5 @@
-import { logEvents } from "@/src/lib/log-events";
 import { Request, Response, NextFunction } from "express";
+import { logEvents } from "../lib/log-events.js";
 const errorHandler = (
     err: Error,
     req: Request,

@@ -1,16 +1,18 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import db from "@/src/lib/drizzle/db"; // Your drizzle db instance
-import * as schema from "@/src/lib/drizzle/schema"; // Your drizzle schema definitions
+import db from "../drizzle/db.js";
+import * as schema from "../drizzle/schema.js";
 
 const crosDomains = process.env.CORS_ALLOWED_ORIGINS
     ? process.env.CORS_ALLOWED_ORIGINS.split(",")
-    : [];
+    : ["http://localhost:5173", "http://localhost:3000", "null", "file://"];
 
 const frontendURL = process.env.FRONTEND_URL || "http://localhost:5173";
 
 // Ensure frontend URL is always in trusted origins
-const trustedOrigins = [...new Set([...crosDomains, frontendURL])];
+const trustedOrigins = [...new Set([...crosDomains, frontendURL])]
+    .map((origin) => origin.trim())
+    .filter(Boolean);
 
 console.log("CORS Allowed Origins for Auth:", trustedOrigins);
 export const auth = betterAuth({

@@ -1,6 +1,6 @@
 import { fromNodeHeaders } from "better-auth/node";
-import { auth } from "@/src/lib/auth/auth";
 import { Request, Response, NextFunction } from "express";
+import { auth } from "../lib/auth/auth.js";
 
 declare global {
   namespace Express {
@@ -11,7 +11,11 @@ declare global {
   }
 }
 
-export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const authMiddleware = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     const session = await auth.api.getSession({
         headers: fromNodeHeaders(req.headers),
     });

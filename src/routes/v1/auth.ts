@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { auth } from "@/src/lib/auth/auth";
 import { toNodeHandler } from "better-auth/node";
+import { auth } from "../../lib/auth/auth.js";
 const router = Router();
 
 /**

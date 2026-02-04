@@ -1,12 +1,12 @@
-# Express + Better Auth + Dizzle Starter Kit
+# Express + Better Auth + Drizzle Starter Kit
 
-🚀 A starter kit for building modern web applications API with **Express 5**, **Better Auth**, **Dizzle**.
+🚀 A starter kit for building modern API backends with **Express 5**, **Better Auth**, and **Drizzle**.
 
 ## 📌 Features
 
 - ✅ **Express 5**
 - ✅ **Better Auth** for authentication
-- ✅ **Dizzle** for database management
+- ✅ **Drizzle** for database management
 - ✅ TypeScript support
 
 ## 📦 Installation
@@ -28,7 +28,7 @@
 
     Fill in the necessary values in the `.env` file.
 
-4. Start docker for Postgress image:
+4. Start docker for Postgres image:
 
     ```sh
     docker compose up -d
@@ -51,13 +51,20 @@
 - Use `pnpx db:studio` to manage your database visually.
 - Customize authentication using Better Auth settings.
 
+## 📦 Build and Run
+
+```sh
+pnpm build
+pnpm start
+```
+
 ## 🛠️ Tech Stack
 
-- **Express 5** - React framework
+- **Express 5** - Web framework
 - **Better Auth** - Authentication
-- **Dizzle** - Database ORM (v7)
+- **Drizzle** - Database ORM
 - **TypeScript** - Type safety
-- **Postgress** - DBMS
+- **Postgres** - DBMS
 
 ---
 
