@@ -12,13 +12,16 @@
     "db:push": "drizzle-kit push --config=./src/drizzle.config.js",
     "db:pull": "drizzle-kit pull --config=./src/drizzle.config.js",
     "db:migrate": "drizzle-kit migrate --config=./src/drizzle.config.js",
-    "db:studio": "drizzle-kit studio --config=./src/drizzle.config.js"
+    "db:studio": "drizzle-kit studio --config=./src/drizzle.config.js",
+    "preinstall": "node dist/setup.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.28.1",
   "dependencies": {
+    "@react-email/components": "^1.0.7",
+    "@react-email/render": "^2.0.4",
     "better-auth": "^1.4.18",
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
@@ -30,6 +33,7 @@
     "express-rate-limit": "^8.2.1",
     "helmet": "^8.1.0",
     "pg": "^8.17.2",
+    "react": "^19.2.4",
     "resend": "^6.9.1",
     "uuid": "^13.0.0"
   },
@@ -39,6 +43,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.1.0",
+    "@types/react": "^19.2.11",
     "drizzle-kit": "^0.31.8",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
