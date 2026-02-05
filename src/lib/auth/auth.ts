@@ -4,6 +4,7 @@ import { magicLink } from "better-auth/plugins";
 import { Resend } from "resend";
 import db from "../drizzle/db.js";
 import * as schema from "../drizzle/schema.js";
+import { buildMagicLinkEmail } from "../email/magic-link.js";
 
 const crosDomains = process.env.CORS_ALLOWED_ORIGINS
     ? process.env.CORS_ALLOWED_ORIGINS.split(",")
@@ -61,13 +62,20 @@ export const auth = betterAuth({
                     throw new Error("RESEND_FROM is not set");
                 }
 
-                await resend.emails.send({
+                const { subject, html, text } = await buildMagicLinkEmail({
+                    appName,
+                    url,
+                });
+
+                console.log(`Sending magic link email to ${email}`);
+                const response = await resend.emails.send({
                     from: resendFrom,
                     to: email,
-                    subject: `Sign in to ${appName}`,
-                    html: `<p>Use this link to sign in to ${appName}:</p><p><a href="${url}">Sign in</a></p>`,
-                    text: `Use this link to sign in to ${appName}: ${url}`,
+                    subject,
+                    html,
+                    text,
                 });
+                console.log("Resend response", response);
             },
         }),
     ],
