@@ -12,8 +12,7 @@
     "db:push": "drizzle-kit push --config=./src/drizzle.config.js",
     "db:pull": "drizzle-kit pull --config=./src/drizzle.config.js",
     "db:migrate": "drizzle-kit migrate --config=./src/drizzle.config.js",
-    "db:studio": "drizzle-kit studio --config=./src/drizzle.config.js",
-    "preinstall": "node dist/setup.js"
+    "db:studio": "drizzle-kit studio --config=./src/drizzle.config.js"
   },
   "keywords": [],
   "author": "",
